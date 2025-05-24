@@ -1,0 +1,35 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+group = 'io.github.openhelios'
+version = '0.0.1'
+repositories {
+	mavenCentral()
+}
+dependencies {
+	implementation 'com.github.hypfvieh:bluez-dbus:0.3.2'
+	runtimeOnly 'com.github.hypfvieh:dbus-java-transport-native-unixsocket:5.1.1'
+
+	testImplementation 'com.badlogicgames.gdx-controllers:gdx-controllers-desktop:2.2.1'
+	testImplementation 'com.badlogicgames.gdx:gdx-backend-lwjgl:1.10.0'
+	testImplementation 'com.badlogicgames.gdx:gdx-platform:1.10.0:natives-desktop'
+
+	testImplementation 'junit:junit:4.13'
+}
+task fatJar(type: Jar) {
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE // allow duplicates
+	manifest {
+		attributes 'Main-Class': project.name + '.Main'
+	}
+	from {
+		configurations.compileClasspath.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+	with jar
+}
+// work around unnecessary timestamp in generated file which always causes dirty files in version control
+// https://issues.gradle.org/browse/GRADLE-2293
+task adjustEclipseSettingsFile() {
+	ant.replaceregexp(file: '.settings/org.eclipse.jdt.core.prefs', match: '^#.*', replace: '', flags:'g', byline: true)
+}
+eclipseJdt.finalizedBy adjustEclipseSettingsFile
