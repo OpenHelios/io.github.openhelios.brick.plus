@@ -35,11 +35,8 @@ public class TechnicHub implements AutoCloseable {
   public TechnicHub(final BluetoothDevice device) {
     this.device = device;
     try {
-      System.out.println("Connect with " + device.getDbusPath() + "...");
       device.connect();
-      System.out.println(" Get Gatt services...");
       List<BluetoothGattService> services = device.getGattServices();
-      System.out.println(" Services: " + services.size());
       while (services.isEmpty()) {
         try {
           Thread.sleep(100);
@@ -47,7 +44,6 @@ public class TechnicHub implements AutoCloseable {
           // ignore
         }
         services = device.getGattServices();
-        System.out.println(" Services: " + services.size());
       }
       InfoService tmpInfoService = null;
       MotorService tmpMotorService = null;

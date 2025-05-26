@@ -33,6 +33,21 @@ public class ControlPlus implements AutoCloseable {
 
   private final List<TechnicHub> hubs = new ArrayList<>();
 
+  private static BluetoothAdapter getAdapter() throws FailedConnectionException {
+    final List<BluetoothAdapter> adapters = DEVICE_MANAGER.getAdapters();
+    if (adapters.isEmpty()) {
+      DEVICE_MANAGER.closeConnection();
+      throw new FailedConnectionException(
+          "No bluetooth adapter found - try 'systemctl start bluetooth' and verify bluetooth adapter is plugged in");
+    }
+    return adapters.get(0);
+  }
+
+  public static List<BluetoothDevice> findTechnicHubs() throws FailedConnectionException {
+    getAdapter();
+    return findTechnicHubs(DEVICE_MANAGER.scanForBluetoothDevices(500));
+  }
+
   public List<TechnicHub> getHubs() {
     synchronized (hubs) {
       return new ArrayList<>(hubs);
@@ -41,12 +56,7 @@ public class ControlPlus implements AutoCloseable {
 
   public void waitForTechnicHubs(final int expectedHubs) throws FailedConnectionException {
     try {
-      final List<BluetoothAdapter> adapters = DEVICE_MANAGER.getAdapters();
-      if (adapters.isEmpty()) {
-        DEVICE_MANAGER.closeConnection();
-        throw new FailedConnectionException("expected bluetooth adapter, but not found");
-      }
-      controller = adapters.get(0);
+      controller = getAdapter();
       int tryCount = 0;
       List<BluetoothDevice> hubs = findTechnicHubs(DEVICE_MANAGER.scanForBluetoothDevices(500));
       while (tryMax > tryCount && hubs.size() < expectedHubs) {
