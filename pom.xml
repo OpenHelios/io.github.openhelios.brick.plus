@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.openhelios</groupId>
-	<artifactId>brick.plus</artifactId>
+	<artifactId>brick-plus</artifactId>
 	<version>0.0.1</version>
 	<description>Unofficial Java library for LEGO Control+ using DBus on Linux.</description>
 	<url>https://github.com/openhelios/io.github.openhelios.brick.plus</url>
